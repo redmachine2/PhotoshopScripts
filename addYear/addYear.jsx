@@ -1,9 +1,13 @@
-var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "Nov/Dec"];
+var monthsForOoTM = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "Nov/Dec"];
+var monthsForRoTM = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+var months;
 var Name = decodeURI(activeDocument.name).replace(/\.[^\.]+$/, '');
 var Path = decodeURI(activeDocument.path);
 
 function main(name){
 	//prompt for year
+	var banner = prompt('OoTM or RoTM?', 'OoTM', 'Continue');
+
 	if(!year){
 		var year = prompt('Enter the year that you wish to create:', 'year', 'Create');
 	}
@@ -12,11 +16,20 @@ function main(name){
 	}
 
 	if(year){
-		var numberOfYears = prompt('How many consective years would you like to create?', '1', 'Start')
-		if(numberOfYears) {
+		var numberOfYears = prompt('How many consective years would you like to create?', '1', 'Start');
+		if(numberOfYears){
 			unselectAll(activeDocument);
-			findLayers(activeDocument, ["Layer 2 copy 4", "Layer 2 copy 11", "Background"]);
-			var editableLayer = findLayer(activeDocument, "January", true);
+			var editableLayer;
+			if(banner === 'RoTM' || banner === 'rotm'){
+				//we are doing recruiting of the month.
+				months = monthsForRoTM;
+				findLayers(activeDocument, ["Layer 2"]);
+				editableLayer = findLayer(activeDocument, 'Text Layer');
+			}else{
+				months = monthsForOoTM;
+				findLayers(activeDocument, ["Layer 2 copy 4", "Layer 2 copy 11", "Background"]);
+				editableLayer = findLayer(activeDocument, "January", true);
+			}
 			for (var j = 0; j < numberOfYears; j++) {
 				if(j !== 0)
 					year = parseInt(year) + 1;
@@ -28,6 +41,8 @@ function main(name){
 			main(year);
 		}
 	}
+
+
 }
 
 function createMonth(month, year, layer){
